@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PSI DELTA — SESSION</title>
+<title>BUTTON — A Music Playground — 20260314-30</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1241,15 +1241,34 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 .classics-track-header {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px 8px;
+  flex-direction: column;
   border-bottom: 1px solid var(--border);
   background: var(--bg);
   position: sticky;
   top: 0;
   z-index: 5;
 }
+.classics-track-header .classics-play-btn {
+  width: 100%;
+  height: 34px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.classics-track-header .classics-play-btn.active {
+  background: var(--spring);
+  color: var(--bg);
+}
+.classics-track-ms-row {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px 5px;
+  gap: 4px;
+}
+.classics-track-ms-row .classics-track-label { flex: 1; }
 
 .classics-track-label {
   font-size: 9px;
@@ -1462,11 +1481,12 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
         <span class="new-song-main">NEW</span>
         <span class="new-song-sub">SONG</span>
       </button>
-      <button class="song-bar-block icon-btn" id="transposeBtn" title="Swap view"><span id="transposeBtnIcon"><svg viewBox="0 0 11 7" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 0.9375C0 0.671875 0.09375 0.453125 0.28125 0.28125C0.453125 0.09375 0.671875 0 0.9375 0H2.0625C2.32812 0 2.54688 0.09375 2.71875 0.28125C2.90625 0.453125 3 0.671875 3 0.9375V2.0625C3 2.32812 2.90625 2.54688 2.71875 2.71875C2.54688 2.90625 2.32812 3 2.0625 3H0.9375C0.671875 3 0.453125 2.90625 0.28125 2.71875C0.09375 2.54688 0 2.32812 0 2.0625V0.9375ZM0.9375 2.0625H2.0625V0.9375H0.9375V2.0625ZM0 4.6875C0 4.42188 0.09375 4.20312 0.28125 4.03125C0.453125 3.84375 0.671875 3.75 0.9375 3.75H2.0625C2.32812 3.75 2.54688 3.84375 2.71875 4.03125C2.90625 4.20312 3 4.42188 3 4.6875V5.8125C3 6.07812 2.90625 6.29688 2.71875 6.46875C2.54688 6.65625 2.32812 6.75 2.0625 6.75H0.9375C0.671875 6.75 0.453125 6.65625 0.28125 6.46875C0.09375 6.29688 0 6.07812 0 5.8125V4.6875ZM0.9375 5.8125H2.0625V4.6875H0.9375V5.8125ZM5.8125 0C6.07812 0 6.29688 0.09375 6.46875 0.28125C6.65625 0.453125 6.75 0.671875 6.75 0.9375V2.0625C6.75 2.32812 6.65625 2.54688 6.46875 2.71875C6.29688 2.90625 6.07812 3 5.8125 3H4.6875C4.42188 3 4.20312 2.90625 4.03125 2.71875C3.84375 2.54688 3.75 2.32812 3.75 2.0625V0.9375C3.75 0.671875 3.84375 0.453125 4.03125 0.28125C4.20312 0.09375 4.42188 0 4.6875 0H5.8125ZM5.8125 0.9375H4.6875V2.0625H5.8125V0.9375ZM3.75 4.6875C3.75 4.42188 3.84375 4.20312 4.03125 4.03125C4.20312 3.84375 4.42188 3.75 4.6875 3.75H5.8125C6.07812 3.75 6.29688 3.84375 6.46875 4.03125C6.65625 4.20312 6.75 4.42188 6.75 4.6875V5.8125C6.75 6.07812 6.65625 6.29688 6.46875 6.46875C6.29688 6.65625 6.07812 6.75 5.8125 6.75H4.6875C4.42188 6.75 4.20312 6.65625 4.03125 6.46875C3.84375 6.29688 3.75 6.07812 3.75 5.8125V4.6875ZM4.6875 5.8125H5.8125V4.6875H4.6875V5.8125ZM9.5625 0C9.82812 0 10.0469 0.09375 10.2188 0.28125C10.4062 0.453125 10.5 0.671875 10.5 0.9375V2.0625C10.5 2.32812 10.4062 2.54688 10.2188 2.71875C10.0469 2.90625 9.82812 3 9.5625 3H8.4375C8.17188 3 7.95312 2.90625 7.78125 2.71875C7.59375 2.54688 7.5 2.32812 7.5 2.0625V0.9375C7.5 0.671875 7.59375 0.453125 7.78125 0.28125C7.95312 0.09375 8.17188 0 8.4375 0H9.5625ZM9.5625 0.9375H8.4375V2.0625H9.5625V0.9375ZM7.5 4.6875C7.5 4.42188 7.59375 4.20312 7.78125 4.03125C7.95312 3.84375 8.17188 3.75 8.4375 3.75H9.5625C9.82812 3.75 10.0469 3.84375 10.2188 4.03125C10.4062 4.20312 10.5 4.42188 10.5 4.6875V5.8125C10.5 6.07812 10.4062 6.29688 10.2188 6.46875C10.0469 6.65625 9.82812 6.75 9.5625 6.75H8.4375C8.17188 6.75 7.95312 6.65625 7.78125 6.46875C7.59375 6.29688 7.5 6.07812 7.5 5.8125V4.6875ZM8.4375 5.8125H9.5625V4.6875H8.4375V5.8125Z"/></svg></span></button>
+      
     </div>
     <!-- Classics piece picker (hidden in Session) -->
     <div id="classicsSongControls" style="display:none;flex:1;overflow-x:auto;overflow-y:hidden;"></div>
     <!-- Always visible -->
+    <button class="song-bar-block icon-btn" id="transposeBtn" title="Swap view"><span id="transposeBtnIcon"><svg viewBox="0 0 11 7" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 0.9375C0 0.671875 0.09375 0.453125 0.28125 0.28125C0.453125 0.09375 0.671875 0 0.9375 0H2.0625C2.32812 0 2.54688 0.09375 2.71875 0.28125C2.90625 0.453125 3 0.671875 3 0.9375V2.0625C3 2.32812 2.90625 2.54688 2.71875 2.71875C2.54688 2.90625 2.32812 3 2.0625 3H0.9375C0.671875 3 0.453125 2.90625 0.28125 2.71875C0.09375 2.54688 0 2.32812 0 2.0625V0.9375ZM0.9375 2.0625H2.0625V0.9375H0.9375V2.0625ZM0 4.6875C0 4.42188 0.09375 4.20312 0.28125 4.03125C0.453125 3.84375 0.671875 3.75 0.9375 3.75H2.0625C2.32812 3.75 2.54688 3.84375 2.71875 4.03125C2.90625 4.20312 3 4.42188 3 4.6875V5.8125C3 6.07812 2.90625 6.29688 2.71875 6.46875C2.54688 6.65625 2.32812 6.75 2.0625 6.75H0.9375C0.671875 6.75 0.453125 6.65625 0.28125 6.46875C0.09375 6.29688 0 6.07812 0 5.8125V4.6875ZM0.9375 5.8125H2.0625V4.6875H0.9375V5.8125ZM5.8125 0C6.07812 0 6.29688 0.09375 6.46875 0.28125C6.65625 0.453125 6.75 0.671875 6.75 0.9375V2.0625C6.75 2.32812 6.65625 2.54688 6.46875 2.71875C6.29688 2.90625 6.07812 3 5.8125 3H4.6875C4.42188 3 4.20312 2.90625 4.03125 2.71875C3.84375 2.54688 3.75 2.32812 3.75 2.0625V0.9375C3.75 0.671875 3.84375 0.453125 4.03125 0.28125C4.20312 0.09375 4.42188 0 4.6875 0H5.8125ZM5.8125 0.9375H4.6875V2.0625H5.8125V0.9375ZM3.75 4.6875C3.75 4.42188 3.84375 4.20312 4.03125 4.03125C4.20312 3.84375 4.42188 3.75 4.6875 3.75H5.8125C6.07812 3.75 6.29688 3.84375 6.46875 4.03125C6.65625 4.20312 6.75 4.42188 6.75 4.6875V5.8125C6.75 6.07812 6.65625 6.29688 6.46875 6.46875C6.29688 6.65625 6.07812 6.75 5.8125 6.75H4.6875C4.42188 6.75 4.20312 6.65625 4.03125 6.46875C3.84375 6.29688 3.75 6.07812 3.75 5.8125V4.6875ZM4.6875 5.8125H5.8125V4.6875H4.6875V5.8125ZM9.5625 0C9.82812 0 10.0469 0.09375 10.2188 0.28125C10.4062 0.453125 10.5 0.671875 10.5 0.9375V2.0625C10.5 2.32812 10.4062 2.54688 10.2188 2.71875C10.0469 2.90625 9.82812 3 9.5625 3H8.4375C8.17188 3 7.95312 2.90625 7.78125 2.71875C7.59375 2.54688 7.5 2.32812 7.5 2.0625V0.9375C7.5 0.671875 7.59375 0.453125 7.78125 0.28125C7.95312 0.09375 8.17188 0 8.4375 0H9.5625ZM9.5625 0.9375H8.4375V2.0625H9.5625V0.9375ZM7.5 4.6875C7.5 4.42188 7.59375 4.20312 7.78125 4.03125C7.95312 3.84375 8.17188 3.75 8.4375 3.75H9.5625C9.82812 3.75 10.0469 3.84375 10.2188 4.03125C10.4062 4.20312 10.5 4.42188 10.5 4.6875V5.8125C10.5 6.07812 10.4062 6.29688 10.2188 6.46875C10.0469 6.65625 9.82812 6.75 9.5625 6.75H8.4375C8.17188 6.75 7.95312 6.65625 7.78125 6.46875C7.59375 6.29688 7.5 6.07812 7.5 5.8125V4.6875ZM8.4375 5.8125H9.5625V4.6875H8.4375V5.8125Z"/></svg></span></button>
     <button class="song-bar-block icon-btn" id="themeBtn" title="Light/dark" style="flex-shrink:0;"><svg viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 6C11.9844 7.125 11.7109 8.13281 11.1797 9.02344C10.6484 9.92969 9.92969 10.6484 9.02344 11.1797C8.13281 11.7109 7.125 11.9844 6 12C4.875 11.9844 3.86719 11.7109 2.97656 11.1797C2.07031 10.6484 1.35156 9.92969 0.820312 9.02344C0.289062 8.13281 0.015625 7.125 0 6C0.015625 4.875 0.289062 3.86719 0.820312 2.97656C1.35156 2.07031 2.07031 1.35156 2.97656 0.820312C3.86719 0.289062 4.875 0.015625 6 0C7.125 0.015625 8.13281 0.289062 9.02344 0.820312C9.92969 1.35156 10.6484 2.07031 11.1797 2.97656C11.7109 3.86719 11.9844 4.875 12 6ZM6 1.125V10.875C7.375 10.8438 8.52344 10.3672 9.44531 9.44531C10.3672 8.52344 10.8438 7.375 10.875 6C10.8438 4.625 10.3672 3.47656 9.44531 2.55469C8.52344 1.63281 7.375 1.15625 6 1.125Z"/></svg></button>
   </div>
 
@@ -3247,7 +3267,7 @@ document.getElementById('statusPill').addEventListener('click', (e) => {
 // classics vars moved to top
 
 const TIMBRES = ['PIANO','STRINGS','ORGAN','LEAD'];
-const KITS    = ['FUNK','ROCK','HIP-HOP','ELECTRONIC','OFF'];
+const KITS    = ['FUNK','ROCK','HIP-HOP','ELECTRONIC'];
 
 const DRUM_PAT = {
   // Funk — classic 2+4 snare, syncopated kick, loose hats (default)
@@ -3445,24 +3465,83 @@ function schedCNote(freq, t, dur, gainNode, timbre) {
 
 function schedCDrum(type, t) {
   if (!A) return;
-  if (type==='K') {
-    const o=A.createOscillator(),g=A.createGain();
-    o.connect(g);g.connect(A.destination);
-    o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(40,t+.08);
-    g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);
-    o.start(t);o.stop(t+.25);
-  } else {
-    const len=type==='H'?.04:type==='O'?.22:.14;
-    const buf=A.createBuffer(1,A.sampleRate*len,A.sampleRate);
-    const d=buf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
-    const src=A.createBufferSource();src.buffer=buf;
-    const g=A.createGain(),f=A.createBiquadFilter();
-    f.type=type==='S'?'bandpass':'highpass';
-    f.frequency.value=type==='S'?2000:7500;
-    src.connect(f);f.connect(g);g.connect(A.destination);
-    const vol=type==='S'?.32:type==='O'?.22:.13;
-    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+len);
-    src.start(t);src.stop(t+len+.02);
+  const kit = drumKit;
+
+  if (type === 'K') {
+    // KICK — varies by kit
+    const o = A.createOscillator(), g = A.createGain(), dist = A.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) { const x = (i * 2) / 256 - 1; curve[i] = x; }
+    dist.curve = curve;
+    o.connect(dist); dist.connect(g); g.connect(A.destination);
+    if (kit === 'FUNK') {
+      // Punchy mid kick
+      o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(45, t + .07);
+      g.gain.setValueAtTime(.75, t); g.gain.exponentialRampToValueAtTime(.001, t + .2);
+      o.start(t); o.stop(t + .22);
+    } else if (kit === 'ROCK') {
+      // Heavy, long kick
+      o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(35, t + .12);
+      g.gain.setValueAtTime(1.0, t); g.gain.exponentialRampToValueAtTime(.001, t + .35);
+      o.start(t); o.stop(t + .38);
+    } else if (kit === 'HIP-HOP') {
+      // Deep sub kick, barely moves
+      o.frequency.setValueAtTime(60, t); o.frequency.exponentialRampToValueAtTime(30, t + .15);
+      g.gain.setValueAtTime(.95, t); g.gain.exponentialRampToValueAtTime(.001, t + .45);
+      o.start(t); o.stop(t + .5);
+    } else if (kit === 'ELECTRONIC') {
+      // Short, clicky, perfectly on the grid
+      o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(60, t + .03);
+      g.gain.setValueAtTime(.85, t); g.gain.exponentialRampToValueAtTime(.001, t + .1);
+      o.start(t); o.stop(t + .12);
+    }
+  } else if (type === 'S') {
+    // SNARE — varies by kit
+    const len = kit === 'ROCK' ? .22 : kit === 'HIP-HOP' ? .18 : kit === 'ELECTRONIC' ? .06 : .14;
+    const buf = A.createBuffer(1, A.sampleRate * len, A.sampleRate);
+    const d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = A.createBufferSource(); src.buffer = buf;
+    const g = A.createGain(), f = A.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.value = kit === 'ROCK' ? 1200 : kit === 'HIP-HOP' ? 800 : kit === 'ELECTRONIC' ? 4000 : 2000;
+    f.Q.value = kit === 'ELECTRONIC' ? 0.5 : 1.2;
+    src.connect(f); f.connect(g); g.connect(A.destination);
+    const vol = kit === 'ROCK' ? .55 : kit === 'HIP-HOP' ? .45 : kit === 'ELECTRONIC' ? .4 : .35;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+    // Add body oscillator for Rock snare
+    if (kit === 'ROCK' || kit === 'FUNK') {
+      const o2 = A.createOscillator(), g2 = A.createGain();
+      o2.frequency.value = kit === 'ROCK' ? 180 : 220;
+      o2.connect(g2); g2.connect(A.destination);
+      g2.gain.setValueAtTime(kit === 'ROCK' ? .3 : .15, t);
+      g2.gain.exponentialRampToValueAtTime(.001, t + .05);
+      o2.start(t); o2.stop(t + .06);
+    }
+    src.start(t); src.stop(t + len + .02);
+  } else if (type === 'H') {
+    // HI-HAT — closed
+    const len = kit === 'ELECTRONIC' ? .025 : kit === 'FUNK' ? .05 : kit === 'HIP-HOP' ? .03 : .04;
+    const buf = A.createBuffer(1, A.sampleRate * len, A.sampleRate);
+    const d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = A.createBufferSource(); src.buffer = buf;
+    const g = A.createGain(), f = A.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = kit === 'HIP-HOP' ? 6000 : 8000;
+    src.connect(f); f.connect(g); g.connect(A.destination);
+    const vol = kit === 'ELECTRONIC' ? .18 : kit === 'HIP-HOP' ? .09 : .13;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+    src.start(t); src.stop(t + len + .01);
+  } else if (type === 'O') {
+    // OPEN HI-HAT / CLAP / CYMBAL
+    const len = kit === 'ROCK' ? .5 : kit === 'ELECTRONIC' ? .12 : kit === 'HIP-HOP' ? .35 : .22;
+    const buf = A.createBuffer(1, A.sampleRate * len, A.sampleRate);
+    const d = buf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = A.createBufferSource(); src.buffer = buf;
+    const g = A.createGain(), f = A.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = kit === 'ROCK' ? 5000 : kit === 'ELECTRONIC' ? 9000 : 6000;
+    src.connect(f); f.connect(g); g.connect(A.destination);
+    const vol = kit === 'ROCK' ? .3 : kit === 'ELECTRONIC' ? .22 : .22;
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + len);
+    src.start(t); src.stop(t + len + .02);
   }
 }
 
@@ -3784,7 +3863,10 @@ function buildClassicsGridHorizontal(g, tracks) {
     const sb=document.createElement('button');sb.className='solo-btn';sb.id=isDrums?'cdsb':`csb-${ti}`;sb.textContent='S';
     if(isDrums)sb.onclick=e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=true;}else drumSoloed=!drumSoloed;e.currentTarget.blur();drawUI();};
     else sb.onclick=(e=>{const _ct=ct;return e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=false;_ct.soloed=true;}else _ct.soloed=!_ct.soloed;e.currentTarget.blur();drawUI();};})(ct);
-    hdr.appendChild(nm);hdr.appendChild(pb);hdr.appendChild(mb);hdr.appendChild(sb);
+    hdr.appendChild(nm);hdr.appendChild(pb);
+    const msRow = document.createElement('div'); msRow.className = 'classics-track-ms-row';
+    msRow.appendChild(nm); msRow.appendChild(mb); msRow.appendChild(sb);
+    hdr.appendChild(msRow);
     section.appendChild(hdr);
     const options = isDrums ? KITS : TIMBRES;
     const cards = document.createElement('div');
