@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-32</title>
+<title>BUTTON — A Music Playground — 20260314-34</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1238,15 +1238,10 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .classics-section {
   border-bottom: 1px solid var(--border);
   display: flex;
+  flex-direction: row;
   align-items: stretch;
 }
-.classics-section .classics-track-header {
-  flex: 0 0 120px;
-  width: 120px;
-  border-bottom: none;
-  border-right: 1px solid var(--border);
-  position: static; /* don't sticky in horizontal mode */
-}
+
 .classics-section .classics-cards,
 .classics-section .classics-drums-cards {
   flex: 1;
@@ -1467,6 +1462,74 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   flex: 1;
   text-align: center;
 }
+
+/* ════ CLASSICS HORIZONTAL ════ */
+.classics-section {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid var(--border);
+}
+/* track-controls and each instrument-card are equal flex-1 columns */
+.classics-track-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px;
+  border-right: 1px solid var(--border);
+  min-width: 0;
+}
+.classics-track-controls .track-name {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  padding: 2px 0;
+}
+.classics-controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+/* Play button fills remaining width in controls row */
+.classics-play-btn-wide {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border-mid);
+  border-radius: 2px;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  transition: all 0.12s;
+  min-width: 0;
+}
+.classics-play-btn-wide svg { width: 8px; height: 10px; display: block; }
+.classics-play-btn-wide:hover { background: var(--border); color: var(--text); }
+.classics-play-btn-wide.active { background: var(--spring); border-color: var(--spring); color: var(--bg); }
+/* M/S row hugs its content */
+.classics-ms-row {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  flex-shrink: 0;
+}
+/* instrument-card in horizontal = same flex-1 as track-controls */
+.classics-section .classics-card {
+  flex: 1;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 0;
+  min-height: 80px;
+}
+.classics-section .classics-card:last-child { border-right: none; }
+.classics-section .classics-drums-cards { display: none; } /* drums handled same way */
 </style>
 </head>
 <body>
@@ -3898,50 +3961,62 @@ function buildClassicsGridVertical(g, tracks) {
 function buildClassicsGridHorizontal(g, tracks) {
   tracks.forEach(({ td, ti, ct, isDrums }) => {
     const section = document.createElement('div'); section.className = 'classics-section';
-    const hdr = document.createElement('div'); hdr.className = 'classics-track-header';
-    const nm = document.createElement('div'); nm.className = 'classics-track-label';
-    nm.id = isDrums ? 'cdrumnm' : `ctnm-${ti}`; nm.textContent = isDrums ? 'DRUMS' : td.name;
-    const pb = document.createElement('button'); pb.className = 'classics-play-btn';
-    pb.id = isDrums ? 'cdpb' : `cpb-${ti}`; pb.innerHTML = '<svg viewBox="0 0 6 8" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0.390625 0.203125C0.640625 0.0677083 0.890625 0.0729167 1.14062 0.21875L5.64062 2.96875C5.86979 3.125 5.98958 3.33854 6 3.60938C5.98958 3.89062 5.86979 4.09896 5.64062 4.23438L1.14062 6.98438C0.890625 7.14062 0.640625 7.15104 0.390625 7.01562C0.140625 6.86979 0.0104167 6.65104 0 6.35938V0.859375C0.0104167 0.567708 0.140625 0.348958 0.390625 0.203125ZM0.875 0.640625C0.791667 0.598958 0.708333 0.598958 0.625 0.640625C0.541667 0.692708 0.5 0.765625 0.5 0.859375V6.35938C0.5 6.45312 0.541667 6.52083 0.625 6.5625C0.708333 6.61458 0.791667 6.61979 0.875 6.57812L5.375 3.82812C5.45833 3.77604 5.5 3.70312 5.5 3.60938C5.5 3.51562 5.45833 3.44271 5.375 3.39062L0.875 0.640625Z"/></svg>';
+
+    // ── Left column: track-controls ──
+    const col = document.createElement('div'); col.className = 'classics-track-controls';
+
+    const nm = document.createElement('div'); nm.className = 'track-name';
+    nm.id = isDrums ? 'cdrumnm' : `ctnm-${ti}`;
+    nm.textContent = isDrums ? 'DRUMS' : td.name;
+    col.appendChild(nm);
+
+    const ctrlRow = document.createElement('div'); ctrlRow.className = 'classics-controls-row';
+
+    // Play button — flex:1, fills remaining width
+    const pb = document.createElement('button'); pb.className = 'classics-play-btn-wide';
+    pb.id = isDrums ? 'cdpb' : `cpb-${ti}`; pb.innerHTML = '<svg viewBox="0 0 6 8" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="[\'M0.390625 0.203125C0.640625 0.0677083 0.890625 0.0729167 1.14062 0.21875L5.64062 2.96875C5.86979 3.125 5.98958 3.33854 6 3.60938C5.98958 3.89062 5.86979 4.09896 5.64062 4.23438L1.14062 6.98438C0.890625 7.14062 0.640625 7.15104 0.390625 7.01562C0.140625 6.86979 0.0104167 6.65104 0 6.35938V0.859375C0.0104167 0.567708 0.140625 0.348958 0.390625 0.203125ZM0.875 0.640625C0.791667 0.598958 0.708333 0.598958 0.625 0.640625C0.541667 0.692708 0.5 0.765625 0.5 0.859375V6.35938C0.5 6.45312 0.541667 6.52083 0.625 6.5625C0.708333 6.61458 0.791667 6.61979 0.875 6.57812L5.375 3.82812C5.45833 3.77604 5.5 3.70312 5.5 3.60938C5.5 3.51562 5.45833 3.44271 5.375 3.39062L0.875 0.640625Z\']"/></svg>';
     if (isDrums) pb.onclick = e=>{e.currentTarget.blur();if(!playing)startClassics(false);drumActive=!drumActive;if(drumActive)classicsDrumStep=0;drawUI();};
     else pb.onclick=(e=>{const _ct=ct;return e=>{e.currentTarget.blur();if(!playing)startClassics(false);_ct.active=!_ct.active;if(_ct.active)_ct.nIdx=0;drawUI();};})(ct);
+    ctrlRow.appendChild(pb);
+
+    // M/S row — hug
+    const msRow = document.createElement('div'); msRow.className = 'classics-ms-row';
     const mb=document.createElement('button');mb.className='mute-btn';mb.id=isDrums?'cdmb':`cmb-${ti}`;mb.textContent='M';
     if(isDrums)mb.onclick=e=>{drumMuted=!drumMuted;e.currentTarget.blur();drawUI();};
     else mb.onclick=(e=>{const _ct=ct;return e=>{_ct.muted=!_ct.muted;e.currentTarget.blur();drawUI();};})(ct);
     const sb=document.createElement('button');sb.className='solo-btn';sb.id=isDrums?'cdsb':`csb-${ti}`;sb.textContent='S';
     if(isDrums)sb.onclick=e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=true;}else drumSoloed=!drumSoloed;e.currentTarget.blur();drawUI();};
     else sb.onclick=(e=>{const _ct=ct;return e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=false;_ct.soloed=true;}else _ct.soloed=!_ct.soloed;e.currentTarget.blur();drawUI();};})(ct);
-    hdr.appendChild(pb);
-    const msRow = document.createElement('div'); msRow.className = 'classics-track-ms-row';
-    msRow.appendChild(nm); msRow.appendChild(mb); msRow.appendChild(sb);
-    hdr.appendChild(msRow);
-    section.appendChild(hdr);
+    msRow.appendChild(mb); msRow.appendChild(sb);
+    ctrlRow.appendChild(msRow);
+
+    col.appendChild(ctrlRow);
+    section.appendChild(col);
+
+    // ── Right: instrument cards ──
     const options = isDrums ? KITS : TIMBRES;
-    const cards = document.createElement('div');
-    cards.className = isDrums ? 'classics-drums-cards' : 'classics-cards';
-    cards.id = isDrums ? 'cdcard' : `ccard-${ti}`;
     options.forEach(opt => {
       const isSelected = isDrums ? opt === drumKit : opt === ct.timbre;
-      const card = document.createElement('div');
-      card.className = 'classics-card' + (isSelected ? ' selected' : '');
+      const card = document.createElement('div'); card.className = 'classics-card' + (isSelected ? ' selected' : '');
       const radio=document.createElement('div');radio.className='classics-card-radio';
       const name=document.createElement('div');name.className='classics-card-name';name.textContent=opt;
       const ic=document.createElement('div');ic.className='classics-card-icon';ic.innerHTML=TIMBRE_ICONS[opt]||'';
       card.appendChild(radio);card.appendChild(name);card.appendChild(ic);
       card.onclick=(e=>{
-        const _opt=opt,_isDrums=isDrums,_ct=ct,_cards=cards;
+        const _opt=opt,_isDrums=isDrums,_ct=ct;
         return e=>{
           if(_isDrums){drumKit=_opt;}else{_ct.timbre=_opt;}
-          _cards.querySelectorAll('.classics-card').forEach((c,i)=>c.classList.toggle('selected',options[i]===_opt));
+          section.querySelectorAll('.classics-card').forEach((c,i)=>c.classList.toggle('selected',options[i]===_opt));
           e.currentTarget.blur();
         };
       })();
-      cards.appendChild(card);
+      section.appendChild(card);
     });
-    section.appendChild(cards);
+
     g.appendChild(section);
   });
 }
+
 
 function drawClassicsUI() {
   if (!classicsMode) return;
@@ -3957,7 +4032,7 @@ function drawClassicsUI() {
   });
   const dmb=document.getElementById('cdmb'); if(dmb) dmb.classList.toggle('muted',drumMuted);
   const dsb=document.getElementById('cdsb'); if(dsb) dsb.classList.toggle('soloed',drumSoloed);
-  const dpb2=document.getElementById('cdpb'); if(dpb2) dpb2.classList.toggle('active',drumActive);
+  const dpb2=document.getElementById('cdpb'); if(dpb2) { dpb2.classList.toggle('active',drumActive); }
   const dn=document.getElementById('cdrumnm');
   if(dn){const out=soloActive&&!drumSoloed;dn.classList.toggle('live',playing&&drumActive&&!drumMuted&&!out);dn.classList.toggle('silenced',!drumActive||drumMuted||(soloActive&&!drumSoloed));}
 }
