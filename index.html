@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-31</title>
+<title>BUTTON — A Music Playground — 20260314-32</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1237,6 +1237,20 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 /* Track section */
 .classics-section {
   border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+}
+.classics-section .classics-track-header {
+  flex: 0 0 120px;
+  width: 120px;
+  border-bottom: none;
+  border-right: 1px solid var(--border);
+  position: static; /* don't sticky in horizontal mode */
+}
+.classics-section .classics-cards,
+.classics-section .classics-drums-cards {
+  flex: 1;
+  /* override grid to fill remaining space */
 }
 
 .classics-track-header {
@@ -3897,7 +3911,7 @@ function buildClassicsGridHorizontal(g, tracks) {
     const sb=document.createElement('button');sb.className='solo-btn';sb.id=isDrums?'cdsb':`csb-${ti}`;sb.textContent='S';
     if(isDrums)sb.onclick=e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=true;}else drumSoloed=!drumSoloed;e.currentTarget.blur();drawUI();};
     else sb.onclick=(e=>{const _ct=ct;return e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=false;_ct.soloed=true;}else _ct.soloed=!_ct.soloed;e.currentTarget.blur();drawUI();};})(ct);
-    hdr.appendChild(nm);hdr.appendChild(pb);
+    hdr.appendChild(pb);
     const msRow = document.createElement('div'); msRow.className = 'classics-track-ms-row';
     msRow.appendChild(nm); msRow.appendChild(mb); msRow.appendChild(sb);
     hdr.appendChild(msRow);
