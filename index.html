@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-49</title>
+<title>BUTTON — A Music Playground — 20260314-50</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2380,9 +2380,8 @@ function buildColHeaders() {
   container.innerHTML = '';
 
   if (!transposed) {
-    // Normal: [empty][M col][scenes...]
+    // Normal: [ctrl col][scenes...]
     const e1 = document.createElement('div'); e1.className = 'ch'; container.appendChild(e1);
-    const e2 = document.createElement('div'); e2.className = 'ch'; e2.textContent = 'M'; container.appendChild(e2);
     const numClips = getNumScenes();
     for (let ci = 0; ci < numClips; ci++) {
       const sh = document.createElement('div');
@@ -2986,7 +2985,8 @@ function buildGrid() {
     row.id = `row-${ti}`;
 
     const ctrl = document.createElement('div');
-    ctrl.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;';
+    ctrl.className = 'track-ctrl';
+    ctrl.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow:hidden;min-width:0;';
     const nm = document.createElement('div');
     nm.className = 'track-name';
     nm.id = `tnm-${ti}`;
