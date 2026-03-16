@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-51</title>
+<title>BUTTON — A Music Playground — 20260314-52</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -304,6 +304,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   padding: 4px 0 6px;
 }
@@ -432,6 +433,10 @@ body {
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   transition: border-color 0.15s, background 0.15s;
 }
 
@@ -449,9 +454,6 @@ body {
 }
 
 .clip-label {
-  position: absolute;
-  top: 7px;
-  left: 9px;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -529,13 +531,12 @@ body.transposed-mode .clip-meta {
 
 /* Step indicators (8 dots across) */
 .step-row {
-  position: absolute;
-  top: 50%;
-  left: 9px;
-  right: 9px;
-  transform: translateY(-50%);
   display: flex;
-  gap: 3px;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 4px 6px;
 }
 
 .sd {
@@ -1424,7 +1425,14 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 /* Clip layout — dedicated strip at bottom for dice+loop */
 .clip { min-height: 72px; height: 100%; }
-.step-row { top: auto; bottom: 26px; left: 8px; right: 8px; transform: none; }
+/* step-row centering preserved */
+.track-ctrl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 .rand-btn { bottom: 3px; right: 36px; width: 26px; height: 20px; border-radius: 3px; }
 .loop-btn { bottom: 3px; right: 6px;  width: 26px; height: 20px; border-radius: 3px; }
 .clip-label { top: 6px; left: 8px; }
@@ -4036,7 +4044,7 @@ function buildClassicsGridVertical(g, tracks) {
   const maxOptions = Math.max(TIMBRES.length, KITS.length);
   for (let optIdx = 0; optIdx < maxOptions; optIdx++) {
     const row = document.createElement('div');
-    row.style.cssText = 'display:grid;grid-template-columns:repeat(' + tracks.length + ',1fr);';
+    row.style.cssText = 'display:grid;grid-template-columns:repeat(' + tracks.length + ',1fr);flex:1;min-height:0;';
     tracks.forEach(({ td, ti, ct, isDrums }) => {
       const options = isDrums ? KITS : TIMBRES;
       if (optIdx >= options.length) { row.appendChild(document.createElement('div')); return; }
