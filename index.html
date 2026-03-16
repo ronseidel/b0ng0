@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-36</title>
+<title>BUTTON — A Music Playground — 20260314-37</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1496,7 +1496,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 }
 /* Play button fills remaining width in controls row */
 .classics-play-btn-wide {
-  flex: 1;
+  width: 100%;
   background: var(--surface);
   border: 1px solid var(--border-mid);
   border-radius: 2px;
@@ -1517,7 +1517,16 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   display: flex;
   flex-direction: row;
   gap: 3px;
-  flex-shrink: 0;
+  width: 100%;
+}
+.classics-ms-row .mute-btn,
+.classics-ms-row .solo-btn {
+  flex: 1;
+  width: auto;
+  height: auto;
+  min-height: 18px;
+  font-size: 8px;
+  padding: 2px 0;
 }
 /* instrument-card in horizontal = same flex-1 as track-controls */
 .classics-section .classics-card {
@@ -1531,21 +1540,24 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .classics-section .classics-card:last-child { border-right: none; }
 .classics-section .classics-drums-cards { display: none; } /* drums handled same way */
 
-/* Classics horizontal ms-row: M and S side by side */
-.classics-ms-row {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  width: 100%;
-}
+/* Classics horizontal: square M/S buttons, visible play icon */
 .classics-ms-row .mute-btn,
 .classics-ms-row .solo-btn {
+  border-radius: 2px !important;
   flex: 1;
   width: auto;
   height: auto;
-  min-height: 20px;
+  min-height: 18px;
   font-size: 8px;
-  padding: 3px 0;
+  padding: 2px 0;
+}
+.classics-play-btn-wide {
+  color: var(--text) !important;
+}
+.classics-play-btn-wide svg {
+  width: 10px;
+  height: 12px;
+  display: block;
 }
 </style>
 </head>
