@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-43</title>
+<title>BUTTON — A Music Playground — 20260314-49</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -360,7 +360,7 @@ body {
 /* ---- COLUMN HEADERS ---- */
 .col-headers {
   display: grid;
-  grid-template-columns: 100px 72px repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 6px;
   margin-bottom: 6px;
   padding: 0 0 4px;
@@ -375,17 +375,15 @@ body {
 }
 
 /* ---- SESSION GRID ---- */
-.grid {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+
 
 .track-row {
   display: grid;
-  grid-template-columns: 100px 72px repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-  align-items: center;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
 
 .track-name {
@@ -427,7 +425,8 @@ body {
 
 /* ---- CLIP CELLS ---- */
 .clip {
-  height: 64px;
+  height: 100%;
+  min-height: 64px;
   border: 1px solid var(--border);
   background: var(--clip-idle);
   position: relative;
@@ -1158,14 +1157,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
 /* ── Grid ── */
-#sessionPanel {
-  padding: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-}
+
 .col-headers { padding: 0; margin-bottom: 0; }
 .grid { gap: 0; }
 .track-row { gap: 0; border-bottom: 1px solid var(--border); }
@@ -1235,6 +1227,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 /* Progress bar */
 .classics-progress {
+  flex-shrink: 0;
   height: 3px;
   background: var(--border);
   overflow: hidden;
@@ -1252,6 +1245,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
 
 .classics-section .classics-cards,
@@ -1318,6 +1313,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  flex: 1;
   padding: 10px 6px 10px;
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -1427,7 +1423,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .tab-icon svg { width: 15px; height: 15px; display: block; }
 
 /* Clip layout — dedicated strip at bottom for dice+loop */
-.clip { height: 72px; }
+.clip { min-height: 72px; height: 100%; }
 .step-row { top: auto; bottom: 26px; left: 8px; right: 8px; transform: none; }
 .rand-btn { bottom: 3px; right: 36px; width: 26px; height: 20px; border-radius: 3px; }
 .loop-btn { bottom: 3px; right: 6px;  width: 26px; height: 20px; border-radius: 3px; }
@@ -1480,6 +1476,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid var(--border);
+  flex: 1;
+  min-height: 0;
 }
 /* track-controls and each instrument-card are equal flex-1 columns */
 .classics-track-controls {
@@ -1592,19 +1590,46 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 }
 
 /* Panels fill main-content height */
-#sessionPanel, #classicsPanel {
+
+
+
+
+/* ── VERTICAL FILL ─────────────────────────────────────────── */
+#sessionPanel {
+  padding: 0;
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
+}
+#classicsPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
 }
 #classicsGrid {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.session-grid {
+.track-row {
   flex: 1;
+  min-height: 0;
 }
+.classics-section {
+  flex: 1;
+  min-height: 0;
+}
+/* ─────────────────────────────────────────────────────────── */
 </style>
 </head>
 <body>
@@ -2343,8 +2368,8 @@ function applyGridColumns() {
   const nT = TRACKS.length;
   const nS = getNumScenes();
   const colDef = transposed
-    ? `120px repeat(${nT}, 1fr)`
-    : `100px 72px repeat(${nS}, 1fr)`;
+    ? `1fr repeat(${nT}, 1fr)`
+    : `1fr repeat(${nS}, 1fr)`;
   document.getElementById('colHeaders').style.gridTemplateColumns = colDef;
   document.querySelectorAll('.track-row').forEach(r => r.style.gridTemplateColumns = colDef);
 }
@@ -2960,11 +2985,14 @@ function buildGrid() {
     row.className = 'track-row';
     row.id = `row-${ti}`;
 
+    const ctrl = document.createElement('div');
+    ctrl.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;';
     const nm = document.createElement('div');
     nm.className = 'track-name';
     nm.id = `tnm-${ti}`;
     nm.textContent = tr.name;
-    row.appendChild(nm);
+    ctrl.appendChild(nm);
+    row.appendChild(ctrl);
 
     const msWrap = document.createElement('div');
     msWrap.style.cssText = 'display:flex;gap:4px;align-items:center;justify-content:center;';
@@ -2990,7 +3018,7 @@ function buildGrid() {
       e.currentTarget.blur();
     };
     msWrap.appendChild(sb);
-    row.appendChild(msWrap);
+    ctrl.appendChild(msWrap);
 
     tr.clips.forEach((cl, ci) => {
       const cell = document.createElement('div');
@@ -4015,7 +4043,7 @@ function buildClassicsGridVertical(g, tracks) {
       const opt = options[optIdx];
       const isSelected = isDrums ? drumKits.has(opt) : opt === ct.timbre;
       const card = document.createElement('div');
-      card.className = 'classics-card' + (isSelected ? ' selected' : '');
+      card.className = 'classics-card' + (isDrums ? ' drum-card' : '') + (isSelected ? ' selected' : '');
       card.style.cssText = 'border-right:1px solid var(--border);min-height:80px;';
       const radio = document.createElement('div'); radio.className = 'classics-card-radio';
       if (isDrums) radio.innerHTML = isSelected ? CHECKED_ICON : UNCHECKED_ICON;
