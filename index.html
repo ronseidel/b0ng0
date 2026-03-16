@@ -1205,7 +1205,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   cursor: pointer;
   text-align: center;
   padding: 0;
-  width: auto;
+  min-width: 40px;
+  width: 3ch;
 }
 .key-select option { background: var(--surface); color: var(--text); font-size: 14px; }
 
@@ -1957,7 +1958,7 @@ const TICK_MS   = 24;
 let playing      = false;
 let followActions = true;
 let transposeKey = 0; // semitones offset, -12 to +12
-const KEY_NAMES = ['F','F#','G','G#','A','Bb','B','C','C#','D','Eb','E'];
+const KEY_NAMES = ['F','F#','G','Ab','A','Bb','B','C','C#','D','Eb','E'];
 function getKeyName() { return KEY_NAMES[((transposeKey % 12) + 12) % 12]; }
 let classicsMode = false; // defined early so drawUI is safe on first call
 
@@ -3906,10 +3907,9 @@ function updateKeyDisplay() {
 }
 
 document.getElementById('keySelect').addEventListener('change', e => {
-  const keys = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
-  const semitones = [5,6,7,8,9,0,1,2,3,4,10,11]; // offset from F (0)
-  const idx = keys.indexOf(e.target.value);
-  if (idx >= 0) transposeKey = semitones[idx] - 0; // store absolute semitone from C
+  // transposeKey is the index into KEY_NAMES (which starts at F=0)
+  const idx = KEY_NAMES.indexOf(e.target.value);
+  if (idx >= 0) transposeKey = idx;
   e.target.blur();
 });
 
