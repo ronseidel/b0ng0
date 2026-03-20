@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUTTON — A Music Playground — 20260314-55</title>
+<title>BUTTON — A Music Playground — 20260314-61</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -2082,26 +2082,57 @@ function chord(t, freqs, dur, vel = 0.38) {
 }
 
 function lead(t, freq, dur, vel = 0.48) {
-  // Soft sine + detuned triangle blend — warmer, less harsh
-  const o1 = A.createOscillator(), o2 = A.createOscillator();
-  const o2g = A.createGain(), filt = A.createBiquadFilter(), g = A.createGain();
-  o1.type = 'sine';   o1.frequency.value = freq;
-  o2.type = 'triangle'; o2.frequency.value = freq * 1.004; // slight detune
-  o2g.gain.value = 0.35;
-  filt.type = 'lowpass';
-  filt.frequency.setValueAtTime(freq * 3.5, t);
-  filt.frequency.exponentialRampToValueAtTime(freq * 1.4, t + 0.25);
-  filt.Q.value = 0.6;
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vel * 0.32, t + 0.022); // slower attack
-  g.gain.setValueAtTime(vel * 0.28, t + dur * 0.7);
-  g.gain.exponentialRampToValueAtTime(0.001, t + dur + 0.18); // longer release
-  o1.connect(filt); o2.connect(o2g); o2g.connect(filt);
-  filt.connect(g); g.connect(master);
-  toVerb(g, 0.42); // more reverb to smooth it out
-  o1.start(t); o2.start(t); o1.stop(t + dur + 0.25); o2.stop(t + dur + 0.25);
-}
+  // Theremin + Rhodes tine — warm, singing, cuts through
+  const TAIL = 0.22;
+  const stopT = t + dur + TAIL + 0.05;
+  const g = A.createGain();
 
+  // ── Theremin: pure sine, slow warm vibrato ──
+  const therOsc = A.createOscillator(); therOsc.type = 'sine'; therOsc.frequency.value = freq;
+  const lfo = A.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 5.1;
+  const lfoG = A.createGain(); lfoG.gain.value = freq * 0.005;
+  lfo.connect(lfoG); lfoG.connect(therOsc.frequency);
+  const therG = A.createGain();
+  therG.gain.setValueAtTime(0, t);
+  therG.gain.linearRampToValueAtTime(vel * 0.9, t + 0.07);
+  therG.gain.setValueAtTime(vel * 0.9, t + dur - 0.06);
+  therG.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+  therOsc.connect(therG);
+
+  // ── Rhodes tine: fundamental + inharmonic partial ──
+  const tineOsc = A.createOscillator(); tineOsc.type = 'sine'; tineOsc.frequency.value = freq;
+  const harmOsc = A.createOscillator(); harmOsc.type = 'sine'; harmOsc.frequency.value = freq * 2.756;
+  const tineG = A.createGain(); const harmG = A.createGain();
+  tineG.gain.setValueAtTime(0, t);
+  tineG.gain.linearRampToValueAtTime(vel * 0.55, t + 0.007);
+  tineG.gain.exponentialRampToValueAtTime(vel * 0.22, t + 0.09);
+  tineG.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+  harmG.gain.setValueAtTime(0, t);
+  harmG.gain.linearRampToValueAtTime(vel * 0.28, t + 0.004);
+  harmG.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+  tineOsc.connect(tineG); harmOsc.connect(harmG);
+
+  // ── Presence boost ──
+  const presence = A.createBiquadFilter();
+  presence.type = 'peaking'; presence.frequency.value = 3200; presence.gain.value = 3; presence.Q.value = 1.0;
+
+  const merge = A.createGain(); merge.gain.value = 1;
+  therG.connect(merge); tineG.connect(merge); harmG.connect(merge);
+  merge.connect(presence); presence.connect(g);
+
+  // ── Envelope + output ──
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vel * 0.55, t + 0.01);
+  g.gain.setValueAtTime(vel * 0.55, t + dur - 0.04);
+  g.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+  g.connect(master);
+  toVerb(g, 0.48);
+
+  therOsc.start(t); therOsc.stop(stopT);
+  lfo.start(t); lfo.stop(stopT);
+  tineOsc.start(t); tineOsc.stop(stopT);
+  harmOsc.start(t); harmOsc.stop(stopT);
+}
 function pad(t, freq, dur, vel = 0.2) {
   const o1 = A.createOscillator(), o2 = A.createOscillator();
   const filt = A.createBiquadFilter(), g = A.createGain();
@@ -2509,6 +2540,7 @@ function toggleSceneLoop(ci) {
 
 // ---- TRANSPOSE STATE ----
 let transposed = true;
+let sessionTransposed = false;
 
 function getNumScenes() { return TRACKS[0].clips.length; }
 
@@ -3812,19 +3844,75 @@ function schedCNote(freq, t, dur, gainNode, timbre) {
     env.gain.setValueAtTime(1, t + dur - 0.02);
     env.gain.linearRampToValueAtTime(0, t + dur + 0.02);
   } else if (timbre === 'LEAD') {
-    // Triangle with gentle vibrato
-    const o = A.createOscillator(); o.type = 'triangle'; o.frequency.value = freq;
-    const lfo = A.createOscillator(); lfo.frequency.value = 5.5;
-    const lfog = A.createGain(); lfog.gain.value = freq * 0.008;
-    lfo.connect(lfog); lfog.connect(o.frequency);
-    o.connect(env);
+    // Cello + Mellotron choir — gritty, warm, reverby
+    const TAIL = 0.22;
+
+    // ── Cello: bowed sawtooth with bow noise + vibrato ──
+    const cello1 = A.createOscillator(); cello1.type = 'sawtooth'; cello1.frequency.value = freq;
+    const cello2 = A.createOscillator(); cello2.type = 'sawtooth'; cello2.frequency.value = freq * 1.004;
+    // Cello body filter — warm low-mids, cut harsh highs
+    const bodyF = A.createBiquadFilter(); bodyF.type = 'lowpass'; bodyF.frequency.value = freq * 6; bodyF.Q.value = 0.7;
+    const warmF = A.createBiquadFilter(); warmF.type = 'peaking'; warmF.frequency.value = 300; warmF.gain.value = 4; warmF.Q.value = 1.2;
+    // Vibrato — starts slow, deepens after attack (natural bow technique)
+    const vib = A.createOscillator(); vib.type = 'sine'; vib.frequency.value = 5.8;
+    const vibG = A.createGain(); vibG.gain.setValueAtTime(0, t); vibG.gain.linearRampToValueAtTime(freq * 0.012, t + 0.18);
+    vib.connect(vibG); vibG.connect(cello1.frequency); vibG.connect(cello2.frequency);
+    const celloG = A.createGain();
+    celloG.gain.setValueAtTime(0, t);
+    celloG.gain.linearRampToValueAtTime(0.18, t + 0.12); // slow bow attack
+    celloG.gain.setValueAtTime(0.18, t + dur - 0.06);
+    celloG.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+    cello1.connect(bodyF); cello2.connect(bodyF); bodyF.connect(warmF); warmF.connect(celloG);
+
+    // ── Mellotron choir: 3 slightly detuned sines per octave layer ──
+    // Low octave (body) + mid (presence)
+    const ratios = [1.0, 1.007, 0.994]; // slight tape-wobble detuning
+    const choirG = A.createGain();
+    choirG.gain.setValueAtTime(0, t);
+    choirG.gain.linearRampToValueAtTime(0.11, t + 0.08);
+    choirG.gain.setValueAtTime(0.11, t + dur - 0.06);
+    choirG.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+    // Mellotron formant filter — nasal/breathiness
+    const formant = A.createBiquadFilter(); formant.type = 'peaking'; formant.frequency.value = 800; formant.gain.value = 5; formant.Q.value = 2.5;
+    const choirOscs = ratios.map(r => {
+      const o = A.createOscillator(); o.type = 'triangle'; o.frequency.value = freq * r;
+      o.connect(formant);
+      return o;
+    });
+    formant.connect(choirG);
+
+    // ── Grit: gentle tape saturation ──
+    const gritG = A.createGain(); gritG.gain.value = 1.8;
+    const satCurve = new Float32Array(512);
+    for (let i = 0; i < 512; i++) {
+      const x = (i * 2) / 511 - 1;
+      satCurve[i] = Math.tanh(x * 1.4) * 0.75;
+    }
+    const sat = A.createWaveShaper(); sat.curve = satCurve; sat.oversample = '4x';
+    const merge = A.createGain(); merge.gain.value = 1;
+    celloG.connect(merge); choirG.connect(merge);
+    merge.connect(gritG); gritG.connect(sat); sat.connect(env);
+
+    // ── Reverb — generous, like the drum room ──
+    if (verb) {
+      const dryG = A.createGain(); dryG.gain.value = 0.7;
+      const wetG = A.createGain(); wetG.gain.value = 0.55;
+      sat.connect(dryG); dryG.connect(master);
+      sat.connect(wetG); wetG.connect(verb); verb.connect(master);
+    }
+
+    // ── Main envelope ──
     env.gain.setValueAtTime(0, t);
-    env.gain.linearRampToValueAtTime(0.22, t + 0.02);
+    env.gain.linearRampToValueAtTime(0.22, t + 0.06);
     env.gain.setValueAtTime(0.22, t + dur - 0.04);
-    env.gain.linearRampToValueAtTime(0, t + dur + 0.04);
-    o.start(t); o.stop(t + dur + 0.1);
-    lfo.start(t); lfo.stop(t + dur + 0.1);
-  } else {
+    env.gain.linearRampToValueAtTime(0, t + dur + TAIL);
+
+    const stopT = t + dur + TAIL + 0.05;
+    cello1.start(t); cello1.stop(stopT);
+    cello2.start(t); cello2.stop(stopT);
+    vib.start(t); vib.stop(stopT);
+    choirOscs.forEach(o => { o.start(t); o.stop(stopT); });
+    } else {
     // Fallback
     const o = A.createOscillator(); o.type = 'sine'; o.frequency.value = freq;
     o.connect(env);
@@ -4355,6 +4443,7 @@ function switchTab(tab) {
   // Keep classicsMode in sync
   if (tab === 'classics' && !classicsMode) {
     classicsMode = true;
+    sessionTransposed = transposed; // remember session layout preference
     document.getElementById('sessionSongControls').style.display = 'none';
     document.getElementById('classicsSongControls').style.display = 'flex';
     // Classics always in vertical (transposed) layout — force it
@@ -4370,6 +4459,11 @@ function switchTab(tab) {
     classicsMode = false;
     document.getElementById('sessionSongControls').style.display = 'flex';
     document.getElementById('classicsSongControls').style.display = 'none';
+    // Restore session transpose state
+    transposed = sessionTransposed;
+    document.getElementById('transposeBtn').classList.toggle('transposed', transposed);
+    document.body.classList.toggle('transposed-mode', transposed);
+    updateTransposeIcon();
     buildColHeaders();
     buildGrid();
     drawUI();
