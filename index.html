@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>b0ng0 — A Music Playground — v20260418-35</title>
+<title>b0ng0 — A Music Playground — v20260418-37</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;700&family=Anton&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1106,6 +1106,20 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   border-bottom: none !important;
 }
 
+/* v36: last-row clips get a much thicker bottom col-frame so the bottom
+   of each column has extra col-color breathing room (matches the top-of-
+   column breathing from scene-header's new 24px bottom padding). Padding
+   bumped to 36px bottom to keep the dark card area roughly the same size
+   as other clips. */
+.track-row:last-child .clip.trk-colored {
+  box-shadow:
+    inset 0 6px 0 0 var(--trk),
+    inset 0 -24px 0 0 var(--trk),
+    inset 12px 0 0 0 var(--trk),
+    inset -12px 0 0 0 var(--trk);
+  padding-bottom: 34px !important;
+}
+
 /* Clip bottom icon row (loop, mute, dice) */
 .clip-icons {
   display: flex;
@@ -1273,18 +1287,26 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   /* v28: was var(--trk-dark), which made the session column header DARKER
      than the clips below it — exact inverse of what the design wants.
      Now uses --trk so the header sits on the same bright column bg
-     as the rest of the column. */
+     as the rest of the column.
+     v36: bumped vertical padding from 6/4/8 to 20/4/24 — user wanted
+     more col-color breathing room at the top of each column and below
+     the M/S buttons before the first clip. */
   background: var(--trk);
   color: #fff;
-  padding: 6px 4px 8px;
+  padding: 20px 4px 24px;
   gap: 6px;
 }
 .scene-header.trk-colored .scene-num {
   color: rgba(255,255,255,0.85);
   font-size: 8px;
 }
+/* v36: M/S sizing applies to BOTH session scene-header AND classics
+   cg-vert-header-col so they match visually (26x22 instead of the base
+   30x30 circular). */
 .scene-header.trk-colored .mute-btn,
-.scene-header.trk-colored .solo-btn {
+.scene-header.trk-colored .solo-btn,
+.cg-vert-header-col .mute-btn,
+.cg-vert-header-col .solo-btn {
   border-color: rgba(255,255,255,0.3);
   color: rgba(255,255,255,0.5);
   width: 26px;
@@ -1292,9 +1314,13 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   font-size: 7px;
 }
 .scene-header.trk-colored .mute-btn:hover,
-.scene-header.trk-colored .solo-btn:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
-.scene-header.trk-colored .mute-btn.muted { background: var(--coral); border-color: var(--coral); color: #fff; }
-.scene-header.trk-colored .solo-btn.soloed { background: var(--amber); border-color: var(--amber); color: #111; }
+.scene-header.trk-colored .solo-btn:hover,
+.cg-vert-header-col .mute-btn:hover,
+.cg-vert-header-col .solo-btn:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+.scene-header.trk-colored .mute-btn.muted,
+.cg-vert-header-col .mute-btn.muted { background: var(--coral); border-color: var(--coral); color: #fff; }
+.scene-header.trk-colored .solo-btn.soloed,
+.cg-vert-header-col .solo-btn.soloed { background: var(--amber); border-color: var(--amber); color: #111; }
 .scene-header.trk-colored .scene-play-btn {
   border-color: rgba(255,255,255,0.35);
   color: rgba(255,255,255,0.6);
@@ -2066,6 +2092,21 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   border-right-color: rgba(0,0,0,0.12);
   border-bottom: none;
 }
+
+/* v36: last-row classics cards get thicker bottom col-frame so the
+   bottom of each column has extra col-color space. Mirrors the session
+   .track-row:last-child treatment. */
+#classicsGrid > div:last-child .classics-card.ctrk-0,
+#classicsGrid > div:last-child .classics-card.ctrk-1,
+#classicsGrid > div:last-child .classics-card.ctrk-2,
+#classicsGrid > div:last-child .classics-card.ctrk-3 {
+  box-shadow:
+    inset 0 6px 0 0 var(--trk),
+    inset 0 -24px 0 0 var(--trk),
+    inset 12px 0 0 0 var(--trk),
+    inset -12px 0 0 0 var(--trk);
+  padding-bottom: 34px !important;
+}
 .classics-card.ctrk-0 .classics-card-name,
 .classics-card.ctrk-1 .classics-card-name,
 .classics-card.ctrk-2 .classics-card-name,
@@ -2729,6 +2770,48 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
    v01 (20260328) - renamed BUTTON → b0ng0
    v02 (20260328) - colored clip cells, track reorder, scene removal, pad responsive, bug fixes
    v03 (20260328) - SVG instrument icons in column headers (xylophone/bass/synth/drum/note) | per-track play/pause buttons | fixed track color mapping after reorder | colors matched from Figma screenshots
+
+   === v20260418-37 (kill white divider below classics header row) ===
+   User flagged a white line running across all four columns in classics
+   mode, between the header row and the first instrument-card row. That
+   line came from an inline style on the classics header row:
+     headerRow.style.cssText = '...;border-bottom:1px solid var(--border);'
+   Same class of bug as v34 (horizontal dividers breaking the "single
+   column" look), but this one was a live JS-inline style so none of
+   the v34 CSS overrides could touch it.
+
+   Fix: drop the border-bottom fragment from the inline cssText. Now
+   classics columns read as continuous top-to-bottom just like session.
+
+   === v20260418-36 (column top/bottom breathing + classics header parity + default piece highlight) ===
+   Three notes addressed:
+
+   1. Top/bottom of each column gets more col-color breathing room.
+      - Session scene-header padding 6/4/8 -> 20/4/24 — more col-color
+        above the instrument icon and below the M/S buttons.
+      - Classics cg-vert-header-col inline padding 10/4/10 -> 20/4/24,
+        gap 6 -> 10, to match session.
+      - Last-row clips (both modes) get an asymmetric bottom shadow:
+        -6px -> -24px, padding-bottom 16 -> 34. This extends col-color
+        below the last card in each column without changing the card's
+        visible height.
+
+   2. Classics column header now matches session layout.
+      - Word label (classics-track-label: "MELODY", "HARMONY", "BASS",
+        "DRUMS") removed from JS — no longer appended to the column.
+      - Circular classics-play-btn (28x28) swapped for the rectangular
+        trk-play-btn (66x28). Same play-triangle SVG as session for
+        visual parity.
+      - M/S buttons now inside a .trk-ms-row container (was inline-
+        style flex). Session's 26x22 rounded size rule extended to
+        cover .cg-vert-header-col .mute-btn/.solo-btn so both modes
+        render identically.
+
+   3. Default piece highlight. Canon in D (PIECES[0]) is now marked
+      .selected on initial classics mode entry. buildPiecePicker
+      checks selectedPiece at build time: if populated (after
+      doSelectPiece(0) on first tab entry), highlights the matching
+      button; if null, falls back to highlighting index 0.
 
    === v20260418-35 (asymmetric col-frame + smaller play icon from b0ng0.app) ===
    Two things:
@@ -5322,6 +5405,11 @@ function buildPiecePicker() {
   PIECES.forEach((p,i) => {
     const btn = document.createElement('button');
     btn.className = 'piece-btn';
+    // v36: mark the currently-selected piece so users arriving in classics
+    // mode can see which song is active. If no piece has been selected yet
+    // (first paint), default to index 0 (Canon in D).
+    const isSelected = selectedPiece ? (selectedPiece === PIECES[i]) : (i === 0);
+    if (isSelected) btn.classList.add('selected');
     btn.innerHTML = `<span class="piece-composer">${p.composer}</span><span class="piece-name">${p.title}</span>`;
     btn.onclick = (e) => { selectPiece(i); e.currentTarget.blur(); };
     pp.appendChild(btn);
@@ -5427,16 +5515,22 @@ function buildClassicsGridVertical(g, tracks) {
   // Column headers row
   const headerRow = document.createElement('div');
   headerRow.className = 'cg-vert-header';
-  headerRow.style.cssText = 'display:grid;grid-template-columns:repeat(' + tracks.length + ',1fr);border-bottom:1px solid var(--border);';
+  // v37: dropped border-bottom:1px solid var(--border) from this inline
+  // cssText. That 1px line was the white divider visible across all four
+  // classics columns between the header row and the first card row,
+  // breaking the continuous-column look (same class of bug we fixed for
+  // session clips in v34).
+  headerRow.style.cssText = 'display:grid;grid-template-columns:repeat(' + tracks.length + ',1fr);';
 
   tracks.forEach(({ td, ti, ct, isDrums }) => {
     const col = document.createElement('div');
     col.className = 'cg-vert-header-col ctrk-' + (isDrums ? 3 : ti);
-    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 4px 10px;';
-    const nm = document.createElement('div');
-    nm.className = 'classics-track-label'; nm.id = isDrums ? 'cdrumnm' : `ctnm-${ti}`;
-    nm.textContent = isDrums ? 'DRUMS' : td.name;
-    nm.style.fontSize = '7px';
+    // v36: padding 10/4/10 -> 20/4/24 to match session scene-header's new
+    // breathing room at top and below M/S. Gap 6 -> 10 matches session.
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 4px 24px;';
+
+    // v36: word label (classics-track-label) removed — classics columns
+    // now match session layout: icon + rect play + rect M/S, no label.
 
     // v25: column-header instrument icon (multi-color from b0ng0.app)
     const ic = document.createElement('div');
@@ -5446,14 +5540,18 @@ function buildClassicsGridVertical(g, tracks) {
       : (CLASSICS_TRACK_ICONS[(td.name || '').toUpperCase()] || '');
 
     const pb = document.createElement('button');
-    pb.className = 'classics-play-btn'; pb.id = isDrums ? 'cdpb' : `cpb-${ti}`;
-    pb.innerHTML = '<svg viewBox="0 0 6 8" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0.390625 0.203125C0.640625 0.0677083 0.890625 0.0729167 1.14062 0.21875L5.64062 2.96875C5.86979 3.125 5.98958 3.33854 6 3.60938C5.98958 3.89062 5.86979 4.09896 5.64062 4.23438L1.14062 6.98438C0.890625 7.14062 0.640625 7.15104 0.390625 7.01562C0.140625 6.86979 0.0104167 6.65104 0 6.35938V0.859375C0.0104167 0.567708 0.140625 0.348958 0.390625 0.203125ZM0.875 0.640625C0.791667 0.598958 0.708333 0.598958 0.625 0.640625C0.541667 0.692708 0.5 0.765625 0.5 0.859375V6.35938C0.5 6.45312 0.541667 6.52083 0.625 6.5625C0.708333 6.61458 0.791667 6.61979 0.875 6.57812L5.375 3.82812C5.45833 3.77604 5.5 3.70312 5.5 3.60938C5.5 3.51562 5.45833 3.44271 5.375 3.39062L0.875 0.640625Z"/></svg>';
+    // v36: swap circular .classics-play-btn -> wide rect .trk-play-btn
+    // (matches session column header). Same play-triangle SVG as session
+    // trk-play-btn for visual parity.
+    pb.className = 'trk-play-btn'; pb.id = isDrums ? 'cdpb' : `cpb-${ti}`;
+    pb.innerHTML = '<svg viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 2.7v8.6c0 .4.44.66.77.44l6.9-4.3c.31-.19.31-.69 0-.88l-6.9-4.3c-.33-.22-.77.04-.77.44z"/></svg>';
     if (isDrums) {
       pb.onclick = e => { e.currentTarget.blur(); if (!playing) startClassics(false); drumActive=!drumActive; if (drumActive) classicsDrumStep=0; drawUI(); };
     } else {
       pb.onclick = (e => { const _ti=ti, _ct=ct; return e => { e.currentTarget.blur(); if (!playing) startClassics(false); _ct.active=!_ct.active; if (_ct.active) _ct.nIdx=0; drawUI(); }; })();
     }
-    const ms = document.createElement('div'); ms.style.cssText = 'display:flex;gap:3px;';
+    // v36: M/S row uses same class as session (trk-ms-row) so CSS styling cascades consistently.
+    const ms = document.createElement('div'); ms.className = 'trk-ms-row';
     const mb = document.createElement('button'); mb.className = 'mute-btn'; mb.id = isDrums ? 'cdmb' : `cmb-${ti}`; mb.textContent = 'M';
     if (isDrums) mb.onclick = e=>{drumMuted=!drumMuted;e.currentTarget.blur();drawUI();};
     else mb.onclick = (e=>{const _ct=ct;return e=>{_ct.muted=!_ct.muted;e.currentTarget.blur();drawUI();};})(ct);
@@ -5461,7 +5559,7 @@ function buildClassicsGridVertical(g, tracks) {
     if (isDrums) sb.onclick = e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=true;}else drumSoloed=!drumSoloed;e.currentTarget.blur();drawUI();};
     else sb.onclick = (e=>{const _ct=ct,_ti=ti;return e=>{if(e.altKey){classicsTracks.forEach(t=>t.soloed=false);drumSoloed=false;_ct.soloed=true;}else _ct.soloed=!_ct.soloed;e.currentTarget.blur();drawUI();};})(ct);
     ms.appendChild(mb); ms.appendChild(sb);
-    col.appendChild(nm); col.appendChild(ic); col.appendChild(pb); col.appendChild(ms);
+    col.appendChild(ic); col.appendChild(pb); col.appendChild(ms);
     headerRow.appendChild(col);
   });
   g.appendChild(headerRow);
