@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 
 <!-- Primary -->
-<title>b0ng0 — Play, layer, loop. — v20260420-42</title>
+<title>b0ng0 — Play, layer, loop. — v20260420-43</title>
 <meta name="description" content="Play, layer, loop. A browser music playground. Two modes — session clip launcher and classical piece studio. Part of the 0fam ecosystem.">
 <meta name="theme-color" content="#0A0A0A">
 
@@ -1087,11 +1087,11 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.85;
+  opacity: 0.5;  /* v43: idle dim. Hover/active override below restore full. */
 }
 .clip .clip-play-icon svg {
-  width: 38px;
-  height: 38px;
+  width: 28px;  /* v43: was 38 — felt too large/loud inside the dark card */
+  height: 28px;
   display: block;
 }
 .clip.trk-colored .clip-play-icon { color: rgba(255,255,255,0.5); }
@@ -1175,7 +1175,7 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.4);  /* v43: was 0.55 — further dimmed */
   transition: color 0.12s;
   position: static;
   border-radius: 0;
@@ -2137,8 +2137,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .classics-card.selected .classics-card-name { color: var(--text); }
 
 .classics-card-icon {
-  width: 32px;
-  height: 32px;
+  width: 24px;  /* v43: was 32 — clip-cell icon felt too loud */
+  height: 24px;
   color: var(--text-dim);
   opacity: 0.5;
 }
@@ -2194,7 +2194,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .classics-card.ctrk-2 .classics-card-icon,
 .classics-card.ctrk-3 .classics-card-icon {
   color: rgba(255,255,255,0.85);
-  opacity: 0.85;
+  opacity: 0.5;  /* v43: was 0.85 — idle dim to match session clip icons */
 }
 .classics-card.ctrk-0:hover,
 .classics-card.ctrk-1:hover,
@@ -2325,7 +2325,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .pb-icon-sm { display:flex; align-items:center; justify-content:center; }
 .pb-icon-sm svg { width: 13px; height: 13px; display: block; }
 #transposeBtnIcon svg { width: 16px; height: 16px; display: block; }
-.classics-card-icon svg { width: 28px; height: 28px; display: block; }
+.classics-card-icon svg { width: 22px; height: 22px; display: block; }
 
 .pb-btn.play-btn { background: var(--surface); }
 .pb-btn.play-btn.playing { background: var(--text); color: var(--bg); }
@@ -2461,7 +2461,9 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 /* v35: mobile play-icon shrink. Desktop is now 28x28 (img from b0ng0.app
    via v35's JS swap). On narrow mobile, even 28 is a lot — shrinks to
-   22. Targets img since the icon is now an <img>, not inline <svg>.
+   20. Targets img since the icon is now an <img>, not inline <svg>.
+   v43 note: desktop size pulled down to 28 too, so the mobile step is
+   small (28 → 20) but still meaningful for narrow viewports.
    Also shrink the asymmetric col-frame horizontal padding: on narrow
    phones, 22px horizontal padding + 12px side frame leaves almost no
    content width, so content + clip-icons get squeezed. Pull horizontal
@@ -2469,8 +2471,12 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
    clip-icons row to fit the new ~64px content box. */
 @media (max-width: 560px) {
   .clip .clip-play-icon img {
-    width: 22px !important;
-    height: 22px !important;
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .clip .clip-play-icon svg {
+    width: 20px !important;
+    height: 20px !important;
   }
   .clip.trk-colored {
     padding: 14px 14px 12px !important;
@@ -2907,6 +2913,36 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 <script>
 /* CHANGELOG:
+   === v20260420-43 (quieter clip-cell icons — smaller + more transparent) ===
+   Clip-cell icons were reading as loud against the Phase 2 colored
+   columns, especially on mobile where the dark cards are narrower and
+   the icons dominated. Ron flagged: "icons definitely have to be
+   smaller and more transparent" in both session and classics.
+
+   Scope: clip-cell icons only. Column-header icons (xylo / guitar /
+   synth / drum / classics melody/harmony/bass/drums) explicitly NOT
+   touched — Ron confirmed those feel right.
+
+   Changes (all idle states — hover/active/selected go full opacity):
+
+   Session clip play triangle:
+     - Desktop 38 → 28px
+     - Mobile 22 → 20px (still a meaningful step)
+     - Idle opacity 0.85 → 0.5
+
+   Session clip-icons row (loop/mute/dice):
+     - Size unchanged (14/10 still fine)
+     - Idle color rgba(255,255,255,0.55 → 0.40)
+
+   Classics timbre-card icon (piano/strings/organ/lead SVG):
+     - Container 32 → 24px
+     - Inner svg 28 → 22px
+     - ctrk-colored idle opacity 0.85 → 0.5
+
+   Selected/hover/active states unchanged — those already overrode to
+   full opacity so they still pop as the primary "this is the chosen
+   one" signal.
+
    === v20260420-42 (classics: eliminate hitch on mid-playback piece switch) ===
    Pre-existing timing bug surfaced by instrumenting classicsTick. In
    doSelectPiece's keepPlaying branch, classicsStartT and
