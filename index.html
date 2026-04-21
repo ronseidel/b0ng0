@@ -3,8 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>b0ng0 — A Music Playground — v20260418-37</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;700&family=Anton&display=swap" rel="stylesheet">
+<meta name="color-scheme" content="light dark">
+
+<!-- Primary -->
+<title>b0ng0 — Play, layer, loop. — v20260418-38</title>
+<meta name="description" content="Play, layer, loop. A browser music playground. Two modes — session clip launcher and classical piece studio. Part of the 0fam ecosystem.">
+<meta name="theme-color" content="#0A0A0A">
+
+<!-- Open Graph (Facebook, iMessage, Slack, Discord, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://b0ng0.app/">
+<meta property="og:site_name" content="0fam">
+<meta property="og:title" content="b0ng0 — Play, layer, loop.">
+<meta property="og:description" content="A browser music playground. Two modes — session clip launcher and classical piece studio.">
+<meta property="og:image" content="https://b0ng0.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="b0ng0 wordmark in white on black, with a 5-column grid in gold, orange, purple, green, and teal.">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://b0ng0.app/">
+<meta name="twitter:title" content="b0ng0 — Play, layer, loop.">
+<meta name="twitter:description" content="A browser music playground. Two modes — session clip launcher and classical piece studio.">
+<meta name="twitter:image" content="https://b0ng0.app/og.png">
+<meta name="twitter:image:alt" content="b0ng0 wordmark in white on black, with a 5-column grid in gold, orange, purple, green, and teal.">
+
+<!-- Icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;700&family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
   /* Typography */
@@ -2766,6 +2797,34 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 <script>
 /* CHANGELOG:
+   === v20260418-38 (social meta + OG image + favicons for shareable release) ===
+   Pre-share polish. v37 head had only charset, viewport, title, and a
+   fonts link — nothing for social previews or browser tabs. Added the
+   full head meta block:
+
+   - Primary: description, color-scheme, theme-color #0A0A0A
+   - Open Graph: type, url, site_name "0fam", title, description,
+     image at b0ng0.app/og.png with explicit 1200x630 dimensions + alt
+   - Twitter: summary_large_image variant, parallel tags
+   - Icons: SVG favicon (scales crisply anywhere), 32x32 PNG fallback,
+     180x180 apple-touch-icon, 192x192 PWA/Android icon
+
+   Title updated to "b0ng0 — Play, layer, loop. — v20260418-38" —
+   tagline swapped in for "A Music Playground", version marker kept.
+
+   Space Mono added to the Google Fonts link (wasn't loaded in v37;
+   needed here in case the 0fam wordmark ever renders in-app).
+
+   Assets to upload to b0ng0.app root (separate step, produced
+   alongside this build):
+     og.png               1200x630  dark bg + 5-track-color grid
+     favicon.svg          dotted zero, 0fam mark
+     favicon-32.png       32x32 fallback for browsers without SVG icon support
+     apple-touch-icon.png 180x180 for iOS home screen
+     icon-192.png         192x192 PWA / Android
+
+   No app-logic changes. Head-only diff.
+
    v52 (20260314) - last stable BUTTON build (base for Badunk)
    v01 (20260328) - renamed BUTTON → b0ng0
    v02 (20260328) - colored clip cells, track reorder, scene removal, pad responsive, bug fixes
