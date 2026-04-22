@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 
 <!-- Primary -->
-<title>b0ng0 — Play, layer, loop. — v20260420-44</title>
+<title>b0ng0 — Play, layer, loop. — v20260420-45</title>
 <meta name="description" content="Play, layer, loop. A browser music playground. Two modes — session clip launcher and classical piece studio. Part of the 0fam ecosystem.">
 <meta name="theme-color" content="#0A0A0A">
 
@@ -1089,8 +1089,11 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   justify-content: center;
   opacity: 0.5;  /* v43: idle dim. Hover/active override below restore full. */
 }
+.clip .clip-play-icon img,
 .clip .clip-play-icon svg {
-  width: 22px;  /* v44: 28 → 22 (80% of previous) per "still too big" */
+  width: 22px;  /* v44/45: 28→22 (v44 spec), v45 adds img target since actual
+                   element is an <img> — prior rule targeted svg only, so the
+                   inline style on the img won silently across v35-v44. */
   height: 22px;
   display: block;
 }
@@ -2339,7 +2342,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .pb-icon-sm { display:flex; align-items:center; justify-content:center; }
 .pb-icon-sm svg { width: 13px; height: 13px; display: block; }
 #transposeBtnIcon svg { width: 16px; height: 16px; display: block; }
-.classics-card-icon svg { width: 18px; height: 18px; display: block; } /* v44: 22 → 18 */
+.classics-card-icon img,
+.classics-card-icon svg { width: 18px; height: 18px; display: block; } /* v45: add img target (element is <img>) */
 
 .pb-btn.play-btn { background: var(--surface); }
 .pb-btn.play-btn.playing { background: var(--text); color: var(--bg); }
@@ -2927,6 +2931,45 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 <script>
 /* CHANGELOG:
+   === v20260420-45 (fix: icon shrinks from v43/v44 didn't apply on desktop) ===
+   Ron flagged "clip button icons didn't get smaller" on laptop. He was
+   right. Silent bug dating back to v35 and v26.
+
+   Root cause: the play icon and all 9 classics timbre icons are injected
+   via JS as <img> elements with hardcoded inline styles:
+     playIcon.innerHTML = '<img ... style="width:28px;height:28px;...">'
+     TIMBRE_ICONS.PIANO = '<img ... style="width:32px;height:32px;...">'
+   Inline styles beat stylesheets, so v43's and v44's CSS size changes
+   (targeting .clip-play-icon svg at 28→22 and .classics-card-icon svg
+   at 28→22→18) had zero effect on the actual <img> elements.
+   Mobile appeared to work because the @media overrides use !important
+   AND explicitly target img.
+
+   This is exactly the "multiple cascade sources, check inline-JS styles
+   too" gotcha already documented. I should have checked.
+
+   Fix:
+   1. Remove inline width/height/display from the <img> elements in JS.
+      Kept the src and added alt="" — that's it.
+   2. Update the stylesheet rules to target both `img` and `svg`
+      selectors, so whichever element is rendered picks up the size.
+        .clip .clip-play-icon img, .clip .clip-play-icon svg { 22px }
+        .classics-card-icon img, .classics-card-icon svg { 18px }
+
+   Expected effect — real change now visible on desktop Chrome:
+     Session play triangle: was rendering 28px, now 22px
+     Classics timbre icons: were rendering 32px, now 18px
+     (Classics container is already 19px per v44; image no longer
+     overflows it.)
+
+   Side-effect fix: Ron also flagged LEAD icon looking right-shifted
+   in classics. That was likely a consequence of the same bug — 32px
+   image overflowing 19px container surfaced asymmetry in the SVG's
+   internal viewBox that didn't show at the intended size. Fixing
+   image size should resolve (or at least reduce) the centering issue.
+   If LEAD still looks off with the correct size, that's an SVG asset
+   problem to fix at the asset level on b0ng0.app.
+
    === v20260420-44 (clip icons 80%, gold selected fixed, radio-dot -> check) ===
    Three changes from Ron's feedback on v43.
 
@@ -4861,7 +4904,7 @@ function buildGrid() {
       // no longer apply since it's an img, but opacity changes still work.
       const playIcon = document.createElement('div');
       playIcon.className = 'clip-play-icon';
-      playIcon.innerHTML = '<img src="https://b0ng0.app/icons/btn-play.svg" alt="" style="width:28px;height:28px;display:block;">';
+      playIcon.innerHTML = '<img src="https://b0ng0.app/icons/btn-play.svg" alt="">';
       cell.appendChild(playIcon);
 
       // Step indicator row
@@ -5944,14 +5987,14 @@ const TIMBRE_ICONS = {
   // white multi-color SVGs designed to sit on darker-tinted cards. The
   // invert()/brightness() filter that was applied in v09 is removed for
   // these (they're already white). Opacity bumped to 1.0.
-  'PIANO':      '<img src="https://b0ng0.app/icons/classics/classics-piano.svg" style="width:32px;height:32px;display:block;">',
-  'STRINGS':    '<img src="https://b0ng0.app/icons/classics/classics-strings.svg" style="width:32px;height:32px;display:block;">',
-  'ORGAN':      '<img src="https://b0ng0.app/icons/classics/classics-organ.svg" style="width:32px;height:32px;display:block;">',
-  'LEAD':       '<img src="https://b0ng0.app/icons/classics/classics-lead.svg" style="width:32px;height:32px;display:block;">',
-  'FUNK':       '<img src="https://b0ng0.app/icons/classics/classics-funk.svg" style="width:32px;height:32px;display:block;">',
-  'ROCK':       '<img src="https://b0ng0.app/icons/classics/classics-rock.svg" style="width:32px;height:32px;display:block;">',
-  'HIP-HOP':    '<img src="https://b0ng0.app/icons/classics/classics-hip-hop.svg" style="width:32px;height:32px;display:block;">',
-  'ELECTRONIC': '<img src="https://b0ng0.app/icons/classics/classics-electronic.svg" style="width:32px;height:32px;display:block;">',
+  'PIANO':      '<img src="https://b0ng0.app/icons/classics/classics-piano.svg" alt="">',
+  'STRINGS':    '<img src="https://b0ng0.app/icons/classics/classics-strings.svg" alt="">',
+  'ORGAN':      '<img src="https://b0ng0.app/icons/classics/classics-organ.svg" alt="">',
+  'LEAD':       '<img src="https://b0ng0.app/icons/classics/classics-lead.svg" alt="">',
+  'FUNK':       '<img src="https://b0ng0.app/icons/classics/classics-funk.svg" alt="">',
+  'ROCK':       '<img src="https://b0ng0.app/icons/classics/classics-rock.svg" alt="">',
+  'HIP-HOP':    '<img src="https://b0ng0.app/icons/classics/classics-hip-hop.svg" alt="">',
+  'ELECTRONIC': '<img src="https://b0ng0.app/icons/classics/classics-electronic.svg" alt="">',
   'OFF':        ''
 }
 
