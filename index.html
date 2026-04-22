@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 
 <!-- Primary -->
-<title>b0ng0 — Play, layer, loop. — v20260420-45</title>
+<title>b0ng0 — Play, layer, loop. — v20260420-47</title>
 <meta name="description" content="Play, layer, loop. A browser music playground. Two modes — session clip launcher and classical piece studio. Part of the 0fam ecosystem.">
 <meta name="theme-color" content="#0A0A0A">
 
@@ -946,6 +946,43 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .ctrk-2 { --trk: #4525AA; --trk-mid: #3A1D8E; --trk-dark: #2E1574; --trk-accent: #9B7BFF; }  /* BASS — purple */
 .ctrk-3 { --trk: #108048; --trk-mid: #0D6B3F; --trk-dark: #0A5832; --trk-accent: #5fbf8a; }  /* DRUMS — green */
 
+/* v47: Dark-mode track color overrides. Each column keeps its hue but
+   drops to ~L=18% for column bg and ~L=14% for inner card bg, with
+   saturation pulled down a touch so they read as "tinted darks" rather
+   than "saturated color at low luminosity." Accent rings stay at their
+   light-mode vibrant values — they read great as the active-state
+   signal against the dark tinted column.
+   Values computed via colorsys HSL conversion from light-mode source. */
+[data-theme="dark"] .trk-0,
+[data-theme="dark"] .ctrk-0 {
+  --trk:       #474014;
+  --trk-mid:   #39330E;
+  --trk-dark:  #28240A;
+}
+[data-theme="dark"] .trk-1,
+[data-theme="dark"] .ctrk-1 {
+  --trk:       #432518;
+  --trk-mid:   #351C11;
+  --trk-dark:  #26140C;
+}
+[data-theme="dark"] .trk-2,
+[data-theme="dark"] .ctrk-2 {
+  --trk:       #251D3E;
+  --trk-mid:   #1C1531;
+  --trk-dark:  #140F23;
+}
+[data-theme="dark"] .trk-3,
+[data-theme="dark"] .ctrk-3 {
+  --trk:       #1A412D;
+  --trk-mid:   #133423;
+  --trk-dark:  #0D2519;
+}
+[data-theme="dark"] .trk-4 {
+  --trk:       #183E43;
+  --trk-mid:   #113136;
+  --trk-dark:  #0C2326;
+}
+
 /* ═══════════════ PHASE 2: Session column headers + refined clip anatomy ═══════════════ */
 
 /* Colored column header (icon, wide play, M/S) */
@@ -1566,12 +1603,19 @@ body {
 .nav-util-btn svg { width: 14px; height: 14px; }
 
 @media (max-width: 560px) {
+  /* v46: nav right side was flush at 4px from viewport edge, which clipped
+     the theme toggle on iPhones with notch/dynamic-island safe areas.
+     Bumped to 12px + env(safe-area-inset-*) for notched devices. */
+  .tab-nav {
+    padding-left: max(4px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
   .tab-btn { padding: 12px 6px 10px; gap: 0; }
   .tab-btn::after { left: 6px; right: 6px; }
   .tab-label { font-size: 0; letter-spacing: 0; overflow: hidden; width: 0; transition: none; }
   .tab-btn.active { gap: 6px; }
   .tab-btn.active .tab-label { font-size: 10px; letter-spacing: 0.1em; width: auto; }
-  .nav-util-btn { padding: 12px 8px; }
+  .nav-util-btn { padding: 12px 6px; }
 }
 
 /* ── Song Bar (Figma: label on top, value below, evenly distributed) ── */
@@ -1761,6 +1805,13 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   color: var(--text);
   cursor: pointer;
   text-align: center;
+  /* v46: iOS Safari renders <select> with an implicit left-indent that
+     text-align: center alone doesn't override. text-align-last pins the
+     last (and in this case only) line to center; explicit text-indent
+     zeros out the iOS default; padding: 0 prevents any asymmetric
+     user-agent padding from shifting the F relative to the "KEY" label. */
+  text-align-last: center;
+  text-indent: 0;
   padding: 0;
   min-width: 32px;
   letter-spacing: -0.02em;
@@ -1809,6 +1860,63 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   .key-select { font-size: 18px; }
   .timer-value { font-size: 16px; }
   .action-block .sb-icon svg { width: 18px; height: 18px; }
+}
+
+/* v46: mobile compression — session column headers were 142px tall at 390px
+   viewport, eating ~25% of the visible canvas before clips started. Cuts:
+     - padding 20/24 -> 8/10  (saves 26px)
+     - trk-icon 36px height, 32px svg -> 24px/24px  (saves 12px)
+     - trk-play-btn 28px -> 22px tall, narrower 48px (saves 6px)
+     - M/S 30x26 -> 24x20  (saves 6px)
+     - gap 6 -> 4  (saves 4px)
+   Net: ~90px tall instead of 142px. */
+@media (max-width: 560px) {
+  .scene-header.trk-colored {
+    padding: 8px 4px 10px !important;
+    gap: 4px !important;
+  }
+  .scene-header .trk-icon { height: 24px; }
+  .scene-header .trk-icon svg,
+  .scene-header .trk-icon img { width: 24px; height: 24px; }
+  .trk-play-btn { width: 48px; height: 22px; }
+  .trk-play-btn svg { width: 9px; height: 9px; }
+  .scene-header.trk-colored .mute-btn,
+  .scene-header.trk-colored .solo-btn,
+  .cg-vert-header-col .mute-btn,
+  .cg-vert-header-col .solo-btn {
+    width: 24px;
+    height: 20px;
+    font-size: 9px;
+  }
+  .trk-ms-row { gap: 4px; }
+
+  /* Clip labels — 10px !important was landing "too big and bold" on mobile.
+     Drop to 8px with tighter letter-spacing so they sit quietly in the card. */
+  .clip.trk-colored .clip-label {
+    font-size: 8px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  /* Classics card radio / drum checkbox — card itself is the tap target,
+     these are visual indicators only. Shrink so they don't read as
+     "the button." */
+  .classics-card-radio { width: 14px !important; height: 14px !important; }
+  .classics-card.selected .classics-card-radio::after {
+    width: 5px !important;
+    height: 5px !important;
+  }
+  .classics-card.ctrk-0.selected .classics-card-radio::after,
+  .classics-card.ctrk-1.selected .classics-card-radio::after,
+  .classics-card.ctrk-2.selected .classics-card-radio::after,
+  .classics-card.ctrk-3.selected .classics-card-radio::after {
+    width: 4px !important;
+    height: 7px !important;
+    border-width: 0 1.5px 1.5px 0 !important;
+  }
+  .classics-card.drum-card .classics-card-radio svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
 }
 
 /* ── Main Content ── */
@@ -2838,10 +2946,11 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
            inspired style (24px grid, 2px stroke, round caps/joins). Not
            copied from Lucide — the jsdelivr CDN fetch approach we tried in
            v17's first pass hit CORS on file:// origins. -->
-      <button class="song-bar-block action-block session-only" id="startOverBtn" title="Start over">
-        <span class="sb-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="start over"><path d="M3 6 H21"/><path d="M8 6 V4 a2 2 0 0 1 2 -2 h4 a2 2 0 0 1 2 2 V6"/><path d="M19 6 L18 20 a2 2 0 0 1 -2 2 H8 a2 2 0 0 1 -2 -2 L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></span>
-        <span class="sb-label">START OVER</span>
-      </button>
+      <!-- v46: START OVER removed. The trash icon was eating horizontal
+           real estate (especially on mobile) without carrying its weight —
+           a browser refresh does the same thing, and NEW SONG already
+           gives a fresh musical direction. resetSongTimer() helper stays
+           because piece switches and mode switches still call it. -->
     </div>
   </div>
 
@@ -2931,6 +3040,81 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 <script>
 /* CHANGELOG:
+   === v20260420-47 (proper dark mode — columns become dark tinted surfaces) ===
+   Before: dark mode only affected header chrome and some supporting
+   surfaces. The 5 session columns and 4 classics columns stayed at
+   full-saturation light-mode colors, which read as "bright rainbow
+   against black chrome" rather than as a real dark-mode UI.
+
+   After: each column drops to a dark tinted surface that preserves its
+   track identity. Gold is dark olive, orange is deep rust, purple is
+   near-black indigo, green is forest, teal is dark petrol. Active
+   clips still light up with the bright --trk-accent color (unchanged
+   from light mode) — that contrast against the new dark column bg
+   actually makes the active-state signal stronger than it was.
+
+   Mechanism: added [data-theme="dark"] .trk-* and .ctrk-* overrides
+   that rewrite --trk, --trk-mid, and --trk-dark. Everything downstream
+   (session clips, classics cards, column headers, hover/active states,
+   selected-radio check mark) uses var(--trk*) and recolors automatically
+   with zero rule-level changes. --trk-accent is left alone — the
+   vibrant accent still works against both backgrounds.
+
+   Palette (L ~18%/14%/10% with saturation ~55-60% of light-mode):
+     Gold   trk #474014  mid #39330E  dark #28240A
+     Orange trk #432518  mid #351C11  dark #26140C
+     Purple trk #251D3E  mid #1C1531  dark #140F23
+     Green  trk #1A412D  mid #133423  dark #0D2519
+     Teal   trk #183E43  mid #113136  dark #0C2326
+
+   OG / social preview: untouched. Current og.png is already a dark-bg
+   image, so no light variant needed.
+
+   === v20260420-46 (mobile polish pass + remove START OVER) ===
+   Ron flagged several mobile-specific issues and asked to drop START OVER.
+   Six changes in this pass:
+
+   1. REMOVE START OVER. The trash-icon button was eating ~60-80px of
+      horizontal space without carrying its weight. A browser refresh
+      does the same reset, and NEW SONG gives better direction anyway.
+      Deleted button markup + click handler. resetSongTimer() helper
+      kept because piece/mode switches still invoke it.
+
+   2. NAV mobile padding for theme toggle. Theme button was sitting
+      4px from viewport edge on mobile — on iPhones with notch/dynamic-
+      island safe areas it was visually clipped. Bumped .tab-nav mobile
+      padding to 12px right / 4px left, both wrapped in env(safe-area-
+      inset-*) max() for notched devices.
+
+   3. COLUMN HEADERS compressed on mobile. Were 142px tall — almost 25%
+      of visible canvas at 390x844 before clips started. Cuts:
+        padding 20/4/24 -> 8/4/10 (saves 26px vertical)
+        trk-icon height 36, svg 32 -> 24/24 (saves 12)
+        trk-play-btn 66x28 -> 48x22 (saves 6)
+        M/S buttons 30x26 -> 24x20 (saves 6)
+        gap 6 -> 4 (saves 4)
+      Net height ~94px. Visual hierarchy preserved.
+
+   4. CLIP LABELS shrunk on mobile. 10px + 0.14em letter-spacing was
+      loud and bold. Dropped to 8px + 0.1em letter-spacing so labels
+      sit quietly in the card rather than dominating it.
+
+   5. KEY select centering on iOS. iOS Safari renders <select>
+      elements with an implicit left-indent that text-align: center
+      doesn't override — the "F" value appeared shifted left of its
+      "KEY" label. Added text-align-last: center + text-indent: 0 +
+      explicit padding: 0 to the .key-select rule. This is an iOS-
+      specific issue — desktop Chrome/Safari/Firefox all respect
+      text-align alone.
+
+   6. CLASSICS SELECTED RADIO/CHECK shrunk on mobile. 18x18 pitched
+      radio and 16x16 drum SVG checkbox were dominating the cards and
+      reading like the actual tap target. Card itself is clickable, so
+      these are indicator-only — shrunk to 14x14 / 13x13 on mobile,
+      inner dot/check scaled proportionally. Border-width on the check
+      mark pseudo-element also dropped from 2px to 1.5px so the
+      smaller check still reads as proportional.
+
    === v20260420-45 (fix: icon shrinks from v43/v44 didn't apply on desktop) ===
    Ron flagged "clip button icons didn't get smaller" on laptop. He was
    right. Silent bug dating back to v35 and v26.
@@ -6327,24 +6511,8 @@ document.getElementById('newSongBtn').addEventListener('click', e => {
 // ── Apps button removed in v11 (was linking to r0n.info) ─────────────────
 
 // ── START OVER: stop playback, reset track steps to 0 ─────────────────────
-document.getElementById('startOverBtn').addEventListener('click', e => {
-  e.currentTarget.blur();
-  if (playing) stopPlay();
-  // Reset all session tracks
-  if (typeof TRACKS !== 'undefined') {
-    TRACKS.forEach(tr => { tr.active = false; tr.curStep = 0; });
-  }
-  // Reset classics tracks
-  if (typeof classicsTracks !== 'undefined') {
-    classicsTracks.forEach(ct => { ct.active = false; ct.nIdx = 0; });
-  }
-  if (typeof drumActive !== 'undefined') drumActive = false;
-  // Reset timer (v21: also clear accumulated + last-state so it doesn't
-  // keep accumulating where it left off)
-  resetSongTimer();
-  drawUI();
-  showToast('START OVER');
-});
+// v46: START OVER button removed from UI, so no click handler needed.
+// resetSongTimer() helper below kept because piece/mode switches call it.
 
 // Shared helper so START OVER, mode switch, and piece switch reset identically.
 function resetSongTimer() {
