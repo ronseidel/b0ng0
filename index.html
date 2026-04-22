@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 
 <!-- Primary -->
-<title>b0ng0 — Play, layer, loop. — v20260420-43</title>
+<title>b0ng0 — Play, layer, loop. — v20260420-44</title>
 <meta name="description" content="Play, layer, loop. A browser music playground. Two modes — session clip launcher and classical piece studio. Part of the 0fam ecosystem.">
 <meta name="theme-color" content="#0A0A0A">
 
@@ -1090,8 +1090,8 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   opacity: 0.5;  /* v43: idle dim. Hover/active override below restore full. */
 }
 .clip .clip-play-icon svg {
-  width: 28px;  /* v43: was 38 — felt too large/loud inside the dark card */
-  height: 28px;
+  width: 22px;  /* v44: 28 → 22 (80% of previous) per "still too big" */
+  height: 22px;
   display: block;
 }
 .clip.trk-colored .clip-play-icon { color: rgba(255,255,255,0.5); }
@@ -1180,7 +1180,7 @@ input.bpm::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   position: static;
   border-radius: 0;
 }
-.clip-icons button svg { width: 14px; height: 14px; display: block; }
+.clip-icons button svg { width: 11px; height: 11px; display: block; } /* v44: 14 → 11 */
 .clip-icons button:hover { color: rgba(255,255,255,0.95); }
 .clip-icons .loop-btn { position: static; width: 28px; height: 24px; }
 .clip-icons .loop-btn.loop-on { color: rgba(255,255,255,0.95); }
@@ -2137,8 +2137,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .classics-card.selected .classics-card-name { color: var(--text); }
 
 .classics-card-icon {
-  width: 24px;  /* v43: was 32 — clip-cell icon felt too loud */
-  height: 24px;
+  width: 19px;  /* v44: 24 → 19 (80%) */
+  height: 19px;
   color: var(--text-dim);
   opacity: 0.5;
 }
@@ -2252,11 +2252,25 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
   background: #fff;
   color: var(--trk); /* drums SVG checkbox fills track color on white bg */
 }
+/* v44: Selected radio mark is now a check (not a filled dot), drawn as two
+   rotated borders on ::after. Uses --trk-dark so gold/yellow (whose --trk
+   is a bright mustard that faded against white) now reads as a strong
+   dark-olive check. Applies to pitched-track cards only — drum cards have
+   their own SVG check via .drum-check-mark and suppress this ::after
+   further down. */
 .classics-card.ctrk-0.selected .classics-card-radio::after,
 .classics-card.ctrk-1.selected .classics-card-radio::after,
 .classics-card.ctrk-2.selected .classics-card-radio::after,
 .classics-card.ctrk-3.selected .classics-card-radio::after {
-  background: var(--trk);
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid var(--trk-dark);
+  border-width: 0 2px 2px 0;
+  border-radius: 0;
+  background: none;
+  transform: rotate(45deg) translateY(-1px);
+  transform-origin: center;
 }
 
 /* NOTE: Piece picker (.piece-btn) was briefly track-colored in v07 — reverted
@@ -2325,7 +2339,7 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 .pb-icon-sm { display:flex; align-items:center; justify-content:center; }
 .pb-icon-sm svg { width: 13px; height: 13px; display: block; }
 #transposeBtnIcon svg { width: 16px; height: 16px; display: block; }
-.classics-card-icon svg { width: 22px; height: 22px; display: block; }
+.classics-card-icon svg { width: 18px; height: 18px; display: block; } /* v44: 22 → 18 */
 
 .pb-btn.play-btn { background: var(--surface); }
 .pb-btn.play-btn.playing { background: var(--text); color: var(--bg); }
@@ -2471,12 +2485,12 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
    clip-icons row to fit the new ~64px content box. */
 @media (max-width: 560px) {
   .clip .clip-play-icon img {
-    width: 20px !important;
-    height: 20px !important;
+    width: 16px !important;  /* v44: 20 → 16 (80%) */
+    height: 16px !important;
   }
   .clip .clip-play-icon svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 16px !important;  /* v44: 20 → 16 (80%) */
+    height: 16px !important;
   }
   .clip.trk-colored {
     padding: 14px 14px 12px !important;
@@ -2490,8 +2504,8 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
     height: 16px !important;
   }
   .clip-icons button svg {
-    width: 10px !important;
-    height: 10px !important;
+    width: 8px !important;  /* v44: 10 → 8 (80%) */
+    height: 8px !important;
   }
   .classics-card.ctrk-0,
   .classics-card.ctrk-1,
@@ -2913,6 +2927,42 @@ input.bpm:focus { cursor: text; caret-color: var(--spring); }
 
 <script>
 /* CHANGELOG:
+   === v20260420-44 (clip icons 80%, gold selected fixed, radio-dot -> check) ===
+   Three changes from Ron's feedback on v43.
+
+   1. Clip-cell icons shrunk to 80% of v43 (v43 was already a big shrink
+      from v42 — this second pass dials them further down). All desktop
+      values rounded where decimals landed off-pixel:
+        Session play triangle   28 -> 22 desktop,  20 -> 16 mobile
+        Clip-icons (loop/mute/dice) svg  14 -> 11 desktop, 10 -> 8 mobile
+        Classics timbre-card icon container  24 -> 19
+        Classics timbre-card inner svg        22 -> 18
+
+      Column-header icons still untouched per Ron's earlier call —
+      they feel right at current size.
+
+   2. Selected-radio inner mark: filled dot -> check mark.
+      Previously .classics-card.ctrk-*.selected .classics-card-radio::after
+      rendered a 6px filled circle using var(--trk) — on gold (trk =
+      #D5B800, a bright mustard) against the white radio background, the
+      contrast was weak and the selection signal got lost vs other
+      tracks. Rebuilt as a CSS-only check: ::after becomes a 5x9 box
+      with border-width 0 2px 2px 0 rotated 45deg, colored
+      var(--trk-dark). For gold, trk-dark = #635700 (dark olive) — now
+      reads as a strong, obvious check against the white radio. Other
+      columns (orange, purple, green-drums) naturally benefit too —
+      their trk-dark shades are high-contrast on white.
+
+      No DOM/JS changes — pure CSS swap on an existing ::after. Drum
+      cards have their own SVG check (.drum-check-mark) and a separate
+      rule suppressing this ::after, which still works because the new
+      check is scoped to ctrk-*.selected and drums override that.
+
+      Matches the mockup Ron shared (colored squares with white checks
+      was the green/drums pattern; non-drum tracks now have the check
+      paradigm too, via the inverse color scheme — white radio, dark
+      check).
+
    === v20260420-43 (quieter clip-cell icons — smaller + more transparent) ===
    Clip-cell icons were reading as loud against the Phase 2 colored
    columns, especially on mobile where the dark cards are narrower and
